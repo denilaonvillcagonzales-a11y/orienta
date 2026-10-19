@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carreras - Orienta</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">
+                <a href="index.html" class="logo-link" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                    <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 8px;">
+                        <defs>
+                            <linearGradient id="orientaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4F46E5" />
+                                <stop offset="100%" stop-color="#7C3AED" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="url(#orientaGrad)" />
+                        <path d="M50 18 L57 43 L82 50 L57 57 L50 82 L43 57 L18 50 L43 43 Z" fill="#FFFFFF" />
+                        <circle cx="50" cy="50" r="5" fill="#4F46E5" />
+                    </svg>
+                    <span>Orienta</span>
+                </a>
+            </h1>
+            <button id="hamburger-btn" class="hamburger" aria-label="Abrir menú">☰</button>
+        </div>
+    </header>
+
+    <!-- MENÚ LATERAL (DRAWER) -->
+    <aside id="nav-drawer" class="drawer">
+        <button id="drawer-close-btn" class="close-btn" aria-label="Cerrar menú">&times;</button>
+        <ul class="drawer-menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="carreras.html" class="active">Carreras</a></li>
+            <li><button id="reset-data-btn" class="btn-link">Reiniciar Test</button></li>
+        </ul>
+    </aside>
+    <div id="menu-overlay" class="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container">
+        <section class="section-block text-center">
+            <h2>Información Completa de Carreras</h2>
+            <p class="subtitle">Explora qué se estudia, su duración, dónde estudiarla y su campo laboral para conectar tu perfil con tus recomendaciones personalizadas.</p>
+
+            <!-- BARRA DE BÚSQUEDA -->
+            <div class="input-group" style="max-width: 500px; margin: 20px auto;">
+                <input type="text" id="career-search-input" placeholder="🔍 Buscar por nombre, área o habilidad...">
+            </div>
+        </section>
+
+        <!-- GRID DE TODAS LAS CARRERAS -->
+        <section class="section-block">
+            <div id="all-careers-grid" class="careers-grid">
+                <!-- Se cargarán dinámicamente desde script.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- VENTANA MODAL PARA DETALLES DE CARRERA -->
+    <div id="career-modal" class="modal">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close" aria-label="Cerrar modal">&times;</button>
+            <h3 id="modal-title" class="modal-title">Nombre de la Carrera</h3>
+            <span id="modal-category" class="modal-badge">Categoría</span>
+            
+            <div class="modal-details">
+                <div class="detail-group">
+                    <h4>📝 Qué se estudia:</h4>
+                    <p id="modal-description"></p>
+                </div>
+                <div class="detail-group">
+                    <h4>⏱️ Duración:</h4>
+                    <p id="modal-duration"></p>
+                </div>
+                <div class="detail-group">
+                    <h4>🏛️ Dónde estudiarla:</h4>
+                    <p id="modal-where"></p>
+                </div>
+                <div class="detail-group">
+                    <h4>🏢 Campo Laboral:</h4>
+                    <p id="modal-workfield"></p>
+                </div>
+                <div class="detail-group">
+                    <h4>💡 Habilidades Clave:</h4>
+                    <p id="modal-skills"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA (AQUÍ ESTABA EL DETALLE) -->
+    <script src="script.js"></script>
+</body>
+</html>

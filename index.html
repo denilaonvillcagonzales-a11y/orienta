@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orienta - Test Vocacional RIASEC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">
+                <a href="index.html" class="logo-link" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                    <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 8px;">
+                        <defs>
+                            <linearGradient id="orientaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4F46E5" />
+                                <stop offset="100%" stop-color="#7C3AED" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="url(#orientaGrad)" />
+                        <path d="M50 18 L57 43 L82 50 L57 57 L50 82 L43 57 L18 50 L43 43 Z" fill="#FFFFFF" />
+                        <circle cx="50" cy="50" r="5" fill="#4F46E5" />
+                    </svg>
+                    <span>Orienta</span>
+                </a>
+            </h1>
+            <button id="hamburger-btn" class="hamburger" aria-label="Abrir menú">☰</button>
+        </div>
+    </header>
+
+    <!-- MENÚ LATERAL (DRAWER) -->
+    <aside id="nav-drawer" class="drawer">
+        <button id="drawer-close-btn" class="close-btn" aria-label="Cerrar menú">&times;</button>
+        <ul class="drawer-menu">
+           <ul class="drawer-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="carreras.html">Carreras</a></li>
+                <li><button id="reset-data-btn" class="btn-link">Reiniciar Test</button></li>
+            </ul>
+    </aside>
+    <div id="menu-overlay" class="overlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container">
+        
+        <!-- HERO SECTION (ESTILO 16PERSONALITIES) -->
+        <section class="hero-section text-center">
+            <p class="hero-quote">“Descubre la carrera que realmente encaja contigo.”</p>
+            <h2>Tu Test Vocacional Gratuito y Preciso</h2>
+            <p class="hero-subtext">Solo te tomará unos minutos obtener un perfil completo basado en el modelo Holland (RIASEC).</p>
+            
+            <div class="hero-image-wrapper">
+                <img src="images/hero.png" alt="Ilustración principal de Orienta" class="hero-img">
+            </div>
+        </section>
+
+        <!-- PASOS DEL TEST -->
+        <section class="steps-section">
+            <h3 class="text-center section-title">¿Cómo funciona?</h3>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <img src="images/step1.png" alt="Paso 1" class="step-img">
+                    <span class="step-badge">Paso 1</span>
+                    <h4>Completa el Test</h4>
+                    <p>Responde con sinceridad para descubrir tu inclinación vocacional real.</p>
+                </div>
+                <div class="step-card">
+                    <img src="images/step2.png" alt="Paso 2" class="step-img">
+                    <span class="step-badge">Paso 2</span>
+                    <h4>Obtén tus Resultados</h4>
+                    <p>Conoce la distribución exacta de tus 6 dimensiones RIASEC.</p>
+                </div>
+                <div class="step-card">
+                    <img src="images/step3.png" alt="Paso 3" class="step-img">
+                    <span class="step-badge">Paso 3</span>
+                    <h4>Explora Carreras</h4>
+                    <p>Descubre opciones profesionales alineadas a tu perfil único.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO DE REGISTRO INICIAL -->
+        <section class="user-setup-section">
+            <div class="card-container">
+                <h3 class="text-center">Comienza tu Evaluación</h3>
+                <p class="text-center subtitle">Ingresa tus datos para personalizar tu informe final:</p>
+                
+                <form id="user-setup-form" class="setup-form">
+                    <div class="input-group">
+                        <label for="user-name">Tu nombre o apodo:</label>
+                        <input type="text" id="user-name" placeholder="Ej. Alex" required autocomplete="off">
+                    </div>
+                    
+        
+
+                    <button type="submit" class="btn-hero-cta btn-block">Comenzar el Test Ahora →</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- VÍNCULO A JAVASCRIPT -->
+    <script src="script.js"></script>
+</body>
+</html>
