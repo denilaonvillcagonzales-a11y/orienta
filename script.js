@@ -291,7 +291,12 @@ function initTestPage() {
 
     renderQuestions();
 
-    document.getElementById("next-btn").addEventListener("click", () => {
+    // Limpiamos el botón de siguiente para evitar duplicados
+    const oldNextBtn = document.getElementById("next-btn");
+    const nextBtn = oldNextBtn.cloneNode(true);
+    oldNextBtn.parentNode.replaceChild(nextBtn, oldNextBtn);
+
+    nextBtn.addEventListener("click", () => {
         const startIdx = userData.currentPage * questionsPerPage;
         const endIdx = startIdx + questionsPerPage;
         const currentQuestions = questions.slice(startIdx, endIdx);
@@ -317,7 +322,11 @@ function initTestPage() {
         }
     });
 
-    document.getElementById("prev-btn-top").addEventListener("click", () => {
+    const prevBtnTop = document.getElementById("prev-btn-top");
+    const newPrevBtn = prevBtnTop.cloneNode(true);
+    prevBtnTop.parentNode.replaceChild(newPrevBtn, prevBtnTop);
+
+    newPrevBtn.addEventListener("click", () => {
         if (userData.currentPage > 0) {
             userData.currentPage--;
             saveData();
