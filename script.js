@@ -1,5 +1,5 @@
 /* =========================================
-   1. BASES DE DATOS (36 PREGUNTAS RIASEC)
+   1. BASES DE DATOS (36 PREGuntas RIASEC)
 ========================================= */
 const questions = [
     // --- SECCIÓN 1 (Preguntas 1 a 6) ---
@@ -194,6 +194,7 @@ const careersDB = [
         skills: "Planificación operativa, gestión de inventarios y optimización de procesos."
     }
 ];
+
 /* =========================================
    2. ESTADO GLOBAL DE LA APLICACIÓN
 ========================================= */
@@ -203,26 +204,8 @@ let userData = {
     answers: {}, 
     currentPage: 0
 };
-const questionsPerPage = 6; // 6 preguntas por página (6 páginas en total para las 36 preguntas)
+const questionsPerPage = 6; 
 const totalPages = Math.ceil(questions.length / questionsPerPage);
-
-/* =========================================
-   3. INICIALIZACIÓN Y ENRUTAMIENTO
-========================================= */
-document.addEventListener("DOMContentLoaded", () => {
-    initNavigation();
-    loadData();
-
-    const path = window.location.pathname;
-
-    if (path.includes("index.html") || path === "/" || path === "") {
-        initIndexPage();
-    } else if (path.includes("test.html")) {
-        initTestPage();
-    } else if (path.includes("resultados.html")) {
-        initResultsPage();
-    }
-});
 
 function saveData() {
     localStorage.setItem("orientaUserData", JSON.stringify(userData));
@@ -280,6 +263,7 @@ function initIndexPage() {
         });
     }
 }
+
 /* =========================================
    5. LÓGICA: PÁGINA DEL CUESTIONARIO (TEST)
 ========================================= */
@@ -291,55 +275,59 @@ function initTestPage() {
 
     renderQuestions();
 
-    // Limpiamos el botón de siguiente para evitar duplicados
     const oldNextBtn = document.getElementById("next-btn");
-    const nextBtn = oldNextBtn.cloneNode(true);
-    oldNextBtn.parentNode.replaceChild(nextBtn, oldNextBtn);
+    if (oldNextBtn) {
+        const nextBtn = oldNextBtn.cloneNode(true);
+        oldNextBtn.parentNode.replaceChild(nextBtn, oldNextBtn);
 
-    nextBtn.addEventListener("click", () => {
-        const startIdx = userData.currentPage * questionsPerPage;
-        const endIdx = startIdx + questionsPerPage;
-        const currentQuestions = questions.slice(startIdx, endIdx);
-        
-        let allAnswered = true;
-        currentQuestions.forEach(q => {
-            if (!userData.answers[q.id]) allAnswered = false;
+        nextBtn.addEventListener("click", () => {
+            const startIdx = userData.currentPage * questionsPerPage;
+            const endIdx = startIdx + questionsPerPage;
+            const currentQuestions = questions.slice(startIdx, endIdx);
+            
+            let allAnswered = true;
+            currentQuestions.forEach(q => {
+                if (!userData.answers[q.id]) allAnswered = false;
+            });
+
+            if (!allAnswered) {
+                alert("Por favor, selecciona una respuesta para todas las preguntas de esta sección antes de continuar.");
+                return;
+            }
+
+            if (userData.currentPage < totalPages - 1) {
+                userData.currentPage++;
+                saveData();
+                renderQuestions();
+                window.scrollTo(0, 0);
+            } else {
+                saveData();
+                window.location.href = "resultados.html";
+            }
         });
-
-        if (!allAnswered) {
-            alert("Por favor, selecciona una respuesta para todas las preguntas de esta sección antes de continuar.");
-            return;
-        }
-
-        if (userData.currentPage < totalPages - 1) {
-            userData.currentPage++;
-            saveData();
-            renderQuestions();
-            window.scrollTo(0, 0);
-        } else {
-            saveData();
-            window.location.href = "resultados.html";
-        }
-    });
+    }
 
     const prevBtnTop = document.getElementById("prev-btn-top");
-    const newPrevBtn = prevBtnTop.cloneNode(true);
-    prevBtnTop.parentNode.replaceChild(newPrevBtn, prevBtnTop);
+    if (prevBtnTop) {
+        const newPrevBtn = prevBtnTop.cloneNode(true);
+        prevBtnTop.parentNode.replaceChild(newPrevBtn, prevBtnTop);
 
-    newPrevBtn.addEventListener("click", () => {
-        if (userData.currentPage > 0) {
-            userData.currentPage--;
-            saveData();
-            renderQuestions();
-            window.scrollTo(0, 0);
-        } else {
-            window.location.href = "index.html";
-        }
-    });
+        newPrevBtn.addEventListener("click", () => {
+            if (userData.currentPage > 0) {
+                userData.currentPage--;
+                saveData();
+                renderQuestions();
+                window.scrollTo(0, 0);
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    }
 }
 
 function renderQuestions() {
     const quizBox = document.getElementById("quiz-box");
+    if (!quizBox) return;
     quizBox.innerHTML = "";
 
     const startIdx = userData.currentPage * questionsPerPage;
@@ -368,11 +356,13 @@ function renderQuestions() {
 
     currentQuestions.forEach(q => {
         const wrapper = document.getElementById(`q-${q.id}`);
+        if (!wrapper) return;
         const buttons = wrapper.querySelectorAll(".option-btn");
         
         if (userData.answers[q.id]) {
             const savedVal = userData.answers[q.id];
-            wrapper.querySelector(`[data-val="${savedVal}"]`).classList.add("selected");
+            const targetBtn = wrapper.querySelector(`[data-val="${savedVal}"]`);
+            if (targetBtn) targetBtn.classList.add("selected");
         }
 
         buttons.forEach(btn => {
@@ -389,15 +379,21 @@ function renderQuestions() {
 }
 
 function updateProgress() {
-    document.getElementById("page-indicator").innerText = `Paso ${userData.currentPage + 1} de ${totalPages}`;
-    const percentage = ((userData.currentPage + 1) / totalPages) * 100;
-    document.getElementById("test-progress-bar").style.width = percentage + "%";
+    const pageIndicator = document.getElementById("page-indicator");
+    const progressBar = document.getElementById("test-progress-bar");
+    if (pageIndicator) pageIndicator.innerText = `Paso ${userData.currentPage + 1} de ${totalPages}`;
+    if (progressBar) {
+        const percentage = ((userData.currentPage + 1) / totalPages) * 100;
+        progressBar.style.width = percentage + "%";
+    }
 
     const nextBtn = document.getElementById("next-btn");
-    if (userData.currentPage === totalPages - 1) {
-        nextBtn.innerText = "Ver mis Resultados 🚀";
-    } else {
-        nextBtn.innerText = "Siguiente →";
+    if (nextBtn) {
+        if (userData.currentPage === totalPages - 1) {
+            nextBtn.innerText = "Ver mis Resultados 🚀";
+        } else {
+            nextBtn.innerText = "Siguiente →";
+        }
     }
 }
 
@@ -411,7 +407,8 @@ function initResultsPage() {
         return;
     }
 
-    document.getElementById("results-user-name").innerText = `¡Felicidades, ${userData.name}!`;
+    const userNameElem = document.getElementById("results-user-name");
+    if (userNameElem) userNameElem.innerText = `¡Felicidades, ${userData.name}!`;
 
     let scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
     
@@ -426,45 +423,52 @@ function initResultsPage() {
     const secondaryType = sortedScores[1][0];
     const profileData = profiles[dominantType];
 
-    document.getElementById("holland-code-text").innerText = profileData.name;
-    document.getElementById("primary-avatar-img").src = profileData.img;
-    document.getElementById("profile-description").innerText = profileData.desc;
+    if (profileData) {
+        const hollandElem = document.getElementById("holland-code-text");
+        const avatarElem = document.getElementById("primary-avatar-img");
+        const descElem = document.getElementById("profile-description");
+
+        if (hollandElem) hollandElem.innerText = profileData.name;
+        if (avatarElem) avatarElem.src = profileData.img;
+        if (descElem) descElem.innerText = profileData.desc;
+    }
 
     const resultsGrid = document.getElementById("results-grid");
-    resultsGrid.innerHTML = "";
-    
-    // Como hay 6 preguntas por categoría y el valor máximo por pregunta es 5, el puntaje máximo por categoría es 30 puntos.
-    const maxScorePerTrait = 30; 
+    if (resultsGrid) {
+        resultsGrid.innerHTML = "";
+        const maxScorePerTrait = 30; 
 
-    sortedScores.forEach(item => {
-        const type = item[0];
-        const score = item[1];
-        const percent = Math.round((score / maxScorePerTrait) * 100);
-        const pData = profiles[type];
+        sortedScores.forEach(item => {
+            const type = item[0];
+            const score = item[1];
+            const percent = Math.round((score / maxScorePerTrait) * 100);
+            const pData = profiles[type];
 
-        const barHtml = `
-            <div class="trait-row">
-                <div class="trait-label">${pData.name}</div>
-                <div class="trait-bar-bg">
-                    <div class="trait-bar-fill bg-${type.toLowerCase()}" style="width: 0%" data-width="${percent}%"></div>
+            const barHtml = `
+                <div class="trait-row">
+                    <div class="trait-label">${pData.name}</div>
+                    <div class="trait-bar-bg">
+                        <div class="trait-bar-fill bg-${type.toLowerCase()}" style="width: 0%" data-width="${percent}%"></div>
+                    </div>
+                    <div class="trait-score">${percent}%</div>
                 </div>
-                <div class="trait-score">${percent}%</div>
-            </div>
-        `;
-        resultsGrid.insertAdjacentHTML("beforeend", barHtml);
-    });
-
-    setTimeout(() => {
-        document.querySelectorAll(".trait-bar-fill").forEach(bar => {
-            bar.style.width = bar.getAttribute("data-width");
+            `;
+            resultsGrid.insertAdjacentHTML("beforeend", barHtml);
         });
-    }, 300);
 
-    renderCareers(dominantType, secondaryType);
+        setTimeout(() => {
+            document.querySelectorAll(".trait-bar-fill").forEach(bar => {
+                bar.style.width = bar.getAttribute("data-width");
+            });
+        }, 300);
+    }
+
+    renderCareersForResult(dominantType, secondaryType);
 }
 
-function renderCareers(t1, t2) {
+function renderCareersForResult(t1, t2) {
     const careersGrid = document.getElementById("careers-grid");
+    if (!careersGrid) return;
     careersGrid.innerHTML = "";
 
     let matches = careersDB.filter(c => c.traits.includes(t1) || c.traits.includes(t2));
@@ -502,6 +506,7 @@ function renderCareers(t1, t2) {
         careersGrid.appendChild(card);
     });
 }
+
 /* =========================================
    7. MODAL DE CARRERAS
 ========================================= */
@@ -515,7 +520,6 @@ function openModal(careerInfo) {
     document.getElementById("modal-category").innerText = careerInfo.field;
     document.getElementById("modal-description").innerText = careerInfo.desc;
     
-    // Nuevos campos: Duración y Dónde estudiarla
     const durationElem = document.getElementById("modal-duration");
     if (durationElem) durationElem.innerText = careerInfo.duration || "No especificada";
 
@@ -534,8 +538,9 @@ if (closeBtn && modal) {
         if (e.target === modal) modal.style.display = "none";
     });
 }
+
 /* =========================================
-   LÓGICA DE LA PÁGINA DE CARRERAS ("N: Carreras")
+   8. LÓGICA DE LA PÁGINA DE CARRERAS ("carreras.html")
 ========================================= */
 function initCarrerasPage() {
     const grid = document.getElementById("all-careers-grid");
@@ -543,7 +548,7 @@ function initCarrerasPage() {
 
     if (!grid) return;
 
-    function renderCareers(list) {
+    function renderAllCareers(list) {
         grid.innerHTML = "";
         if (list.length === 0) {
             grid.innerHTML = "<p class='text-center' style='grid-column: 1/-1;'>No se encontraron carreras que coincidan con la búsqueda.</p>";
@@ -564,7 +569,7 @@ function initCarrerasPage() {
         });
     }
 
-    renderCareers(careersDB);
+    renderAllCareers(careersDB);
 
     if (searchInput) {
         searchInput.addEventListener("input", (e) => {
@@ -575,25 +580,28 @@ function initCarrerasPage() {
                 c.desc.toLowerCase().includes(query) ||
                 (c.skills && c.skills.toLowerCase().includes(query))
             );
-            renderCareers(filtered);
+            renderAllCareers(filtered);
         });
     }
 }
 
-// Enrutador principal al cargar el DOM
+/* =========================================
+   9. ENRUTADOR PRINCIPAL (UNIFICADO Y FLEXIBLE)
+========================================= */
 document.addEventListener("DOMContentLoaded", () => {
     initNavigation();
     loadData();
 
-    const path = window.location.pathname;
+    // Convertimos la ruta a minúsculas para evitar problemas de sensibilidad
+    const path = window.location.pathname.toLowerCase();
 
-    if (path.includes("index.html") || path === "/" || path === "") {
-        initIndexPage();
-    } else if (path.includes("test.html")) {
+    if (path.includes("test")) {
         initTestPage();
-    } else if (path.includes("resultados.html")) {
+    } else if (path.includes("resultado")) {
         initResultsPage();
-    } else if (path.includes("carreras.html")) {
+    } else if (path.includes("carrera")) {
         initCarrerasPage();
+    } else {
+        initIndexPage();
     }
 });
