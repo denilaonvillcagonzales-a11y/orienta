@@ -431,6 +431,13 @@ function initResultsPage() {
         if (hollandElem) hollandElem.innerText = profileData.name;
         if (avatarElem) avatarElem.src = profileData.img;
         if (descElem) descElem.innerText = profileData.desc;
+        // --- INTERACTIVIDAD PARA EL AVATAR ---
+        avatarElem.style.cursor = "pointer";
+        avatarElem.title = "¡Haz clic para conocer más de tu perfil!";
+        
+        avatarElem.onclick = () => {
+            alert(`¡Genial! Tu perfil dominante es ${profileData.name}. ${profileData.desc.substring(0, 90)}... ¡Este arquetipo define tu gran potencial profesional! 🚀`);
+        };
     }
 
     const resultsGrid = document.getElementById("results-grid");
