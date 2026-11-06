@@ -190,7 +190,7 @@ const careersDB = [
         desc: "Planifica y optimiza el flujo de bienes, recursos e inventarios a escala local e internacional.",
         duration: "4 años",
         where: "Facultades de Ingeniería Industrial y Ciencias Empresariales",
-        workfield: "Empresas de comercio electrónico, transporte internacional y distribución.",
+        workfield: "Empresas de comercio electrónico, transporte internacional y distribution.",
         skills: "Planificación operativa, gestión de inventarios y optimización de procesos."
     }
 ];
@@ -248,6 +248,87 @@ function initNavigation() {
 }
 
 /* =========================================
+   3. SISTEMA DE AUDIO UX (WEB AUDIO API)
+========================================= */
+let soundEnabled = true;
+
+function initAudioSystem() {
+    if (document.getElementById("audio-toggle-btn")) return;
+    const audioBtn = document.createElement("button");
+    audioBtn.id = "audio-toggle-btn";
+    audioBtn.innerHTML = "🔊";
+    audioBtn.title = "Silenciar / Activar sonidos";
+    audioBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        background: #7C3AED;
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        transition: transform 0.2s, background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    audioBtn.onmouseover = () => audioBtn.style.transform = "scale(1.1)";
+    audioBtn.onmouseout = () => audioBtn.style.transform = "scale(1)";
+
+    audioBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        audioBtn.innerHTML = soundEnabled ? "🔊" : "🔇";
+        audioBtn.style.background = soundEnabled ? "#7C3AED" : "#64748B";
+    });
+
+    document.body.appendChild(audioBtn);
+}
+
+function playPopSound() {
+    if (!soundEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+    } catch(e) {}
+}
+
+function playSuccessSound() {
+    if (!soundEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, index) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.08);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime + index * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.08 + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + index * 0.08);
+            osc.stop(ctx.currentTime + index * 0.08 + 0.2);
+        });
+    } catch(e) {}
+}
+
+/* =========================================
    4. LÓGICA: PÁGINA DE INICIO (INDEX)
 ========================================= */
 function initIndexPage() {
@@ -301,6 +382,7 @@ function initTestPage() {
                 renderQuestions();
                 window.scrollTo(0, 0);
             } else {
+                playSuccessSound(); // Sonido de éxito al completar el test
                 saveData();
                 window.location.href = "resultados.html";
             }
@@ -370,6 +452,7 @@ function renderQuestions() {
                 buttons.forEach(b => b.classList.remove("selected"));
                 this.classList.add("selected");
                 userData.answers[q.id] = parseInt(this.getAttribute("data-val"));
+                playPopSound(); // Sonido pop sutil al hacer clic en una opción
                 saveData();
             });
         });
@@ -431,13 +514,16 @@ function initResultsPage() {
         if (hollandElem) hollandElem.innerText = profileData.name;
         if (avatarElem) avatarElem.src = profileData.img;
         if (descElem) descElem.innerText = profileData.desc;
-        // --- INTERACTIVIDAD PARA EL AVATAR ---
-        avatarElem.style.cursor = "pointer";
-        avatarElem.title = "¡Haz clic para conocer más de tu perfil!";
         
-        avatarElem.onclick = () => {
-            alert(`¡Genial! Tu perfil dominante es ${profileData.name}. ${profileData.desc.substring(0, 90)}... ¡Este arquetipo define tu gran potencial profesional! 🚀`);
-        };
+        // --- INTERACTIVIDAD PARA EL AVATAR ---
+        if (avatarElem) {
+            avatarElem.style.cursor = "pointer";
+            avatarElem.title = "¡Haz clic para conocer más de tu perfil!";
+            
+            avatarElem.onclick = () => {
+                alert(`¡Genial! Tu perfil dominante es ${profileData.name}. ${profileData.desc.substring(0, 90)}... ¡Este arquetipo define tu gran potencial profesional! 🚀`);
+            };
+        }
     }
 
     const resultsGrid = document.getElementById("results-grid");
@@ -575,40 +661,4 @@ function initCarrerasPage() {
             grid.appendChild(card);
         });
     }
-
-    renderAllCareers(careersDB);
-
-    if (searchInput) {
-        searchInput.addEventListener("input", (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = careersDB.filter(c => 
-                c.title.toLowerCase().includes(query) ||
-                c.field.toLowerCase().includes(query) ||
-                c.desc.toLowerCase().includes(query) ||
-                (c.skills && c.skills.toLowerCase().includes(query))
-            );
-            renderAllCareers(filtered);
-        });
     }
-}
-
-/* =========================================
-   9. ENRUTADOR PRINCIPAL (UNIFICADO Y FLEXIBLE)
-========================================= */
-document.addEventListener("DOMContentLoaded", () => {
-    initNavigation();
-    loadData();
-
-    // Convertimos la ruta a minúsculas para evitar problemas de sensibilidad
-    const path = window.location.pathname.toLowerCase();
-
-    if (path.includes("test")) {
-        initTestPage();
-    } else if (path.includes("resultado")) {
-        initResultsPage();
-    } else if (path.includes("carrera")) {
-        initCarrerasPage();
-    } else {
-        initIndexPage();
-    }
-});
