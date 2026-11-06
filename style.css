@@ -795,3 +795,55 @@ h1, h2, h3, h4 {
     .trait-label { width: 105px; font-size: 0.88rem; }
     .modal-content { padding: 25px; }
 }
+/* =========================================
+   ESTILOS PARA EL AVATAR INTERACTIVO
+========================================= */
+
+.avatar-container-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+/* Anillo brillante de fondo (Glow effect) */
+.avatar-glow-ring {
+    position: relative;
+    padding: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(14, 165, 233, 0.25));
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.15);
+    transition: all 0.4s ease;
+}
+
+.avatar-glow-ring:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(124, 58, 237, 0.35);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(14, 165, 233, 0.45));
+}
+
+/* Imagen del avatar con animación flotante */
+.avatar-img-large {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    animation: floatAvatar 4s ease-in-out infinite;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.08));
+}
+
+@keyframes floatAvatar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Texto de pista pequeño debajo del avatar */
+.avatar-hint {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.85;
+}
