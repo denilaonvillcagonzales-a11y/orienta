@@ -1,5 +1,5 @@
 /* =========================================
-   1. BASES DE DATOS (36 PREGuntas RIASEC)
+   1. BASES DE DATOS (36 PREGUNTAS RIASEC)
 ========================================= */
 const questions = [
     // --- SECCIÓN 1 (Preguntas 1 a 6) ---
@@ -190,7 +190,7 @@ const careersDB = [
         desc: "Planifica y optimiza el flujo de bienes, recursos e inventarios a escala local e internacional.",
         duration: "4 años",
         where: "Facultades de Ingeniería Industrial y Ciencias Empresariales",
-        workfield: "Empresas de comercio electrónico, transporte internacional y distribution.",
+        workfield: "Empresas de comercio electrónico, transporte internacional y distribución.",
         skills: "Planificación operativa, gestión de inventarios y optimización de procesos."
     }
 ];
@@ -213,7 +213,11 @@ function saveData() {
 function loadData() {
     const saved = localStorage.getItem("orientaUserData");
     if (saved) {
-        userData = JSON.parse(saved);
+        try {
+            userData = JSON.parse(saved);
+        } catch(e) {
+            userData = { name: "", answers: {}, currentPage: 0 };
+        }
     }
 }
 
@@ -224,7 +228,7 @@ function initNavigation() {
     const overlay = document.getElementById("menu-overlay");
     const resetBtn = document.getElementById("reset-data-btn");
 
-    if(hamburgerBtn) {
+    if(hamburgerBtn && drawer && overlay) {
         hamburgerBtn.addEventListener("click", () => {
             drawer.classList.add("open");
             overlay.classList.add("visible");
@@ -232,8 +236,8 @@ function initNavigation() {
     }
 
     const closeDrawer = () => {
-        drawer.classList.remove("open");
-        overlay.classList.remove("visible");
+        if(drawer) drawer.classList.remove("open");
+        if(overlay) overlay.classList.remove("visible");
     };
 
     if(closeBtn) closeBtn.addEventListener("click", closeDrawer);
@@ -337,6 +341,11 @@ function initIndexPage() {
         form.addEventListener("submit", (e) => {
             e.preventDefault();
             const nameInput = document.getElementById("user-name").value.trim();
+
+            if (!nameInput) {
+                alert("Por favor ingresa tu nombre.");
+                return;
+            }
 
             userData = { name: nameInput, answers: {}, currentPage: 0 };
             saveData();
@@ -661,4 +670,40 @@ function initCarrerasPage() {
             grid.appendChild(card);
         });
     }
+
+    renderAllCareers(careersDB);
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = careersDB.filter(c => 
+                c.title.toLowerCase().includes(query) ||
+                c.field.toLowerCase().includes(query) ||
+                c.desc.toLowerCase().includes(query) ||
+                (c.skills && c.skills.toLowerCase().includes(query))
+            );
+            renderAllCareers(filtered);
+        });
     }
+}
+
+/* =========================================
+   9. ENRUTADOR PRINCIPAL (UNIFICADO Y FLEXIBLE)
+========================================= */
+document.addEventListener("DOMContentLoaded", () => {
+    initNavigation();
+    loadData();
+    initAudioSystem(); // Inicializa el botón flotante de audio
+
+    const path = window.location.pathname.toLowerCase();
+
+    if (path.includes("test")) {
+        initTestPage();
+    } else if (path.includes("resultado")) {
+        initResultsPage();
+    } else if (path.includes("carrera")) {
+        initCarrerasPage();
+    } else {
+        initIndexPage();
+    }
+});
