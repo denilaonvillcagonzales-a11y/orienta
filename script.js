@@ -333,6 +333,53 @@ function playSuccessSound() {
 }
 
 /* =========================================
+   MODO OSCURO / CLARO
+========================================= */
+function initDarkMode() {
+    const navContainer = document.querySelector(".nav-container");
+    if (!navContainer || document.getElementById("dark-mode-btn")) return;
+    
+    const darkBtn = document.createElement("button");
+    darkBtn.id = "dark-mode-btn";
+    darkBtn.innerHTML = localStorage.getItem("orientaTheme") === "dark" ? "☀️" : "🌙";
+    darkBtn.title = "Cambiar modo oscuro / claro";
+    darkBtn.style.cssText = `
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        margin-left: auto;
+        margin-right: 12px;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+    `;
+
+    darkBtn.onmouseover = () => darkBtn.style.transform = "scale(1.15)";
+    darkBtn.onmouseout = () => darkBtn.style.transform = "scale(1)";
+
+    if (localStorage.getItem("orientaTheme") === "dark") {
+        document.body.classList.add("dark-mode");
+    }
+
+    darkBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        darkBtn.innerHTML = isDark ? "☀️" : "🌙";
+        localStorage.setItem("orientaTheme", isDark ? "dark" : "light");
+    });
+
+    const hamburger = document.getElementById("hamburger-btn");
+    if (hamburger) {
+        navContainer.insertBefore(darkBtn, hamburger);
+    } else {
+        navContainer.appendChild(darkBtn);
+    }
+}
+
+/* =========================================
    4. LÓGICA: PÁGINA DE INICIO (INDEX)
 ========================================= */
 function initIndexPage() {
@@ -515,6 +562,15 @@ function initResultsPage() {
     const secondaryType = sortedScores[1][0];
     const profileData = profiles[dominantType];
 
+    // --- EFECTO DE CONFETI AL CARGAR LOS RESULTADOS ---
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 130,
+            spread: 90,
+            origin: { y: 0.6 }
+        });
+    }
+
     if (profileData) {
         const hollandElem = document.getElementById("holland-code-text");
         const avatarElem = document.getElementById("primary-avatar-img");
@@ -694,6 +750,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initNavigation();
     loadData();
     initAudioSystem(); // Inicializa el botón flotante de audio
+    initDarkMode();    // Inicializa el modo oscuro/claro en la barra de navegación
 
     const path = window.location.pathname.toLowerCase();
 
